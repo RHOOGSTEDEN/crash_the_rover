@@ -43,24 +43,27 @@ def controller(turtlebot_frame, goal_frame):
       x = trans.transform.translation.x
       y = trans.transform.translation.y
       z = trans.transform.translation.z
+      control_command = Twist()
+      # 0.55 is when the 17.0 cm AR Tag is flush with the floor
+      # NEED TO CHANGE once height determined
+      if (x > 0.55):
+        print(x)
+        next_x = K1*x
+        next_theta = K2*y
+        tw = Twist()
 
-      next_x = K1*x
-      next_theta = K2*y
-      tw = Twist()
+        tw.linear.x = next_x  
+        tw.linear.y = 0
+        tw.linear.z = 0
+        tw.angular.x = 0
+        tw.angular.y = 0
+        tw.angular.z = next_theta
+        # Process trans to get your state error
+        # Generate a control command to send to the robot
+        control_command = tw
 
-      tw.linear.x = next_x  
-      tw.linear.y = 0
-      tw.linear.z = 0
-      tw.angular.x = 0
-      tw.angular.y = 0
-      tw.angular.z = next_theta
-
-
-      # Process trans to get your state error
-      # Generate a control command to send to the robot
-
-      control_command = tw
-
+      
+     
       #################################### end your code ###############
 
       pub.publish(control_command)

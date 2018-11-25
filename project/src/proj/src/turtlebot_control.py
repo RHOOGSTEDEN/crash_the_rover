@@ -9,19 +9,22 @@
 import rospy
 import tf2_ros
 import sys
+import patrol
+import instructions
 from geometry_msgs.msg import Twist
 
+hasCheckedLeft = False
+hasCheckedRight = False
+hasRotated = 0
 
-def goToAR(turtlebot_frame, goal_frame, trans):
-    """
-    Performs the calculations needed to have the turtlebot approach the AR Tag if it is seen
-    If there is no AR Tag, the turtlebot stops. 
-    Inputs:
-    - turtlebot_frame: the tf frame of the AR tag on your turtlebot
-    - target_frame: the tf frame of the target AR tag
-    - trans: instance of the lookup transform 
-    """
+# Performs the calculations needed to have the turtlebot approach the AR Tag if it is seen
+# If there is no AR Tag, the turtlebot stops. 
+# Inputs:
+# - turtlebot_frame: the tf frame of the AR tag on your turtlebot
+# - target_frame: the tf frame of the target AR tag
+# - trans: instance of the lookup transform 
 
+def control_twist(turtlebot_frame, goal_frame, trans):
     # P-Constants 
     K1 = 0.3
     K2 = 1
@@ -67,19 +70,39 @@ def controller(turtlebot_frame, goal_frame):
   # Loop until the node is killed with Ctrl-C
   while not rospy.is_shutdown():
 
-    canTrans = tfBuffer.can_transform(turtlebot_frame, goal_frame, rospy.Time.now(), rospy.Duration(0.5))
+    canTrans = tfBuffer.can_transform(turtlebot_frame, goal_frame, rospy.Time.now(), rospy.Duration(0.4))
     print(canTrans)
     control_command = Twist()
 
     if(canTrans == 1):
-        try:
-            trans = tfBuffer.lookup_transform(turtlebot_frame, goal_frame, rospy.Time.now(), rospy.Duration(0.5))
-            control_command = goToAR(turtlebot_frame, goal_frame, trans)
-              # Process trans to get your state error
-              # Generate a control command to send to the robot
-        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
-          print e
-          pass
+      try:
+        trans = tfBuffer.lookup_transform(turtlebot_frame, goal_frame, rospy.Time.now(), rospy.Duration(0.4))
+        control_command = control_twist(turtlebot_frame, goal_frame, trans)
+        # Process trans to get your state error
+        # Generate a control command to send to the robot
+      except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
+        print e
+        pass
+    else:
+      if(!hasCheckedLeft):
+        patrol.left()
+        hasCheckedLeft = True
+
+      if (hasRotated == 26 && hasCheckedLeft):
+        patrol.right()
+        patrol.right()
+        hasCheckedRight = True
+        hasRotated = 0
+
+      if(hasRotated != 26):
+        patrol.spin()
+
+      if(hasCheckedRight && hasCheckedLeft && hasRotated == 26):
+        patrol.left()
+        #requestNew()
+
+
+          
     # Use our rate object to sleep until it is time to publish again
     pub.publish(control_command)
     r.sleep()

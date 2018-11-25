@@ -13,9 +13,7 @@ import patrol
 import instructions
 from geometry_msgs.msg import Twist
 
-hasCheckedLeft = False
-hasCheckedRight = False
-hasRotated = 0
+
 
 # Performs the calculations needed to have the turtlebot approach the AR Tag if it is seen
 # If there is no AR Tag, the turtlebot stops. 
@@ -64,6 +62,10 @@ def controller(turtlebot_frame, goal_frame):
   tfListener = tf2_ros.TransformListener(tfBuffer)
   
 
+  hasCheckedLeft = False
+  hasCheckedRight = False
+  hasRotated = 0
+
   # Create a timer object that will sleep long enough to result in
   # a 10Hz publishing rate
   r = rospy.Rate(20) # 10hz
@@ -84,21 +86,27 @@ def controller(turtlebot_frame, goal_frame):
         print e
         pass
     else:
-      if(!hasCheckedLeft):
-        patrol.left()
+      if(hasCheckedLeft == False):
+        control_command = patrol.patrol_left()
+        pub.publish(control_command)
         hasCheckedLeft = True
 
-      if (hasRotated == 26 && hasCheckedLeft):
-        patrol.right()
-        patrol.right()
+      if (hasRotated == 7 & hasCheckedLeft):
+        control_command = patrol.patrol_right()
+        pub.publish(control_command)
+        control_command = patrol.patrol_right()
+        pub.publish(control_command)
         hasCheckedRight = True
         hasRotated = 0
 
-      if(hasRotated != 26):
-        patrol.spin()
+      if(hasRotated != 7):
+        control_command = patrol.patrol_spin()
+        hasRotated = hasRotated + 1
+        pub.publish(control_command)
 
-      if(hasCheckedRight && hasCheckedLeft && hasRotated == 26):
-        patrol.left()
+      if(hasCheckedRight & hasCheckedLeft & hasRotated == 26):
+        control_command = patrol.patrol_left()
+        pub.publish(control_command)
         #requestNew()
 
 

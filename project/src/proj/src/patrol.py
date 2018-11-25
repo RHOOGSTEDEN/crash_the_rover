@@ -53,10 +53,12 @@ def patrol_right():
 
 def patrol_spin():
   command = Twist()
-  command.linear.x = 0 
+  #command.linear.x = 0 
+  command.linear.x = 0.15
   command.linear.y = 0
   command.linear.z = 0
   command.angular.x = 0
   command.angular.y = 0
-  command.angular.z = np.pi/6
+  #command.angular.z = np.pi/6
+  command.angular.z = np.pi
   return command

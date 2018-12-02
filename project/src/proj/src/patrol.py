@@ -26,12 +26,12 @@ from tf2_msgs.msg import TFMessage
 # negative x by 0.6096 (left by 2 feet). 
 def patrol_left():
   command = Twist()
-  command.linear.x = -0.6096 
+  command.linear.x = 0.6096
   command.linear.y = 0
   command.linear.z = 0
   command.angular.x = 0
   command.angular.y = 0
-  command.angular.z = 0
+  command.angular.z = 8*np.pi
   return command
 
 # If no AR tagh visible, this function is called to move the turtlebot 
@@ -44,7 +44,7 @@ def patrol_right():
   command.linear.z = 0
   command.angular.x = 0
   command.angular.y = 0
-  command.angular.z = 0
+  command.angular.z = -np.pi/2
   return command
 
 # If no AR tagh visible, this function is called to rotate the turtlebot by 30 degrees. 
@@ -60,5 +60,5 @@ def patrol_spin():
   command.angular.x = 0
   command.angular.y = 0
   #command.angular.z = np.pi/6
-  command.angular.z = np.pi
+  command.angular.z = np.pi/2
   return command

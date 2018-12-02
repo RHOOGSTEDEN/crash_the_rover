@@ -1,0 +1,105 @@
+#!/usr/bin/env python
+import sys
+import rospy
+
+import numpy as np
+
+from tf2_msgs.msg import TFMessage
+import tf
+import time
+
+import math
+from numpy.linalg import inv
+
+from artag_location.msg import AT_Message
+
+def callback():
+
+	listener = tf.TransformListener()
+	br = tf.TransformBroadcaster() #Broadcaster
+	rate_br = rospy.Rate(20.0) #Rate for Broadcaster
+
+	while not rospy.is_shutdown():
+
+		# listener.waitForTransform('ar_marker_3','ar_marker_2',rospy.Time(0),rospy.Duration(4.0))
+		# (trans_OD,rot) = listener.lookupTransform('ar_marker_3', 'ar_marker_2', rospy.Time(0))
+
+		# dist_UO = math.sqrt(trans_OD[0]*0.7*trans_OD[0]*0.7 + trans_OD[1]*0.7*trans_OD[1]*0.7)
+
+		# listener.waitForTransform('ar_marker_2','ar_marker_0',rospy.Time(0),rospy.Duration(4.0))
+		# (trans_TO,rot) = listener.lookupTransform('ar_marker_2', 'ar_marker_0', rospy.Time(0))
+
+		# dist_TO = math.sqrt(trans_TO[0]*trans_TO[0] + trans_TO[1]*trans_TO[1])
+		
+		br.sendTransform((x, y, 0.0),(0.0, 0.0, 0.0, 1.0),rospy.Time.now(),"a_frame","ar_marker_2")
+
+		rate_br.sleep()
+
+			# current_time = time.time()
+			# t = current_time - start_time
+			# print "time: %s" % t
+			# listener.waitForTransform('ar_marker_3','ar_marker_2',rospy.Time(0),rospy.Duration(4.0))
+			# (trans_OD,rot) = listener.lookupTransform('ar_marker_3', 'ar_marker_2', rospy.Time(0))
+
+			# dist_UO = math.sqrt(trans_OD[0]*0.7*trans_OD[0]*0.7 + trans_OD[1]*0.7*trans_OD[1]*0.7)
+
+			# listener.waitForTransform('ar_marker_2','ar_marker_0',rospy.Time(0),rospy.Duration(4.0))
+			# (trans_TO,rot) = listener.lookupTransform('ar_marker_2', 'ar_marker_0', rospy.Time(0))
+
+			# dist_TO = math.sqrt(trans_TO[0]*trans_TO[0] + trans_TO[1]*trans_TO[1])
+
+
+			# br.sendTransform((dist_UO*math.cos(math.atan2(y,x)+t*math.pi/20), dist_UO*math.sin(math.atan2(y,x)+t*math.pi/20), 0.0),(0.0, 0.0, 0.0, 1.0),rospy.Time.now(),"a_frame","ar_marker_2")
+
+			# rate_br.sleep()
+
+
+if __name__ == '__main__':
+
+	rospy.init_node('a_broadcaster', anonymous=False)
+
+	listener = tf.TransformListener()
+	br = tf.TransformBroadcaster() #Broadcaster
+	rate_br = rospy.Rate(20.0) #Rate for Broadcaster
+
+
+	listener.waitForTransform('ar_marker_3','ar_marker_2',rospy.Time(0),rospy.Duration(4.0))
+	(trans_OD,rot) = listener.lookupTransform('ar_marker_3', 'ar_marker_2', rospy.Time(0))
+
+	dist_UO = math.sqrt(trans_OD[0]*0.5*trans_OD[0]*0.5 + trans_OD[1]*0.5*trans_OD[1]*0.5)
+
+	listener.waitForTransform('ar_marker_2','ar_marker_0',rospy.Time(0),rospy.Duration(4.0))
+	(trans_TO,rot) = listener.lookupTransform('ar_marker_2', 'ar_marker_0', rospy.Time(0))
+
+	dist_TO = math.sqrt(trans_TO[0]*trans_TO[0] + trans_TO[1]*trans_TO[1])
+
+
+	global x
+	x = trans_TO[0]*dist_UO/dist_TO
+	global y
+	y = trans_TO[1]*dist_UO/dist_TO
+	
+
+	rospy.Timer(rospy.Duration(2.0), callback())
+	
+	# while not rospy.is_shutdown():
+
+	# 	listener = tf.TransformListener()
+	# 	br = tf.TransformBroadcaster() #Broadcaster
+	# 	# rate_br = rospy.Rate(20.0) #Rate for Broadcaster
+
+	# 	listener.waitForTransform('ar_marker_3','ar_marker_2',rospy.Time(0),rospy.Duration(4.0))
+	# 	(trans_OD,rot) = listener.lookupTransform('ar_marker_3', 'ar_marker_2', rospy.Time(0))
+
+	# 	dist_UO = math.sqrt(trans_OD[0]*0.7*trans_OD[0]*0.7 + trans_OD[1]*0.7*trans_OD[1]*0.7)
+
+	# 	listener.waitForTransform('ar_marker_2','ar_marker_0',rospy.Time(0),rospy.Duration(4.0))
+	# 	(trans_TO,rot) = listener.lookupTransform('ar_marker_2', 'ar_marker_0', rospy.Time(0))
+
+	# 	dist_TO = math.sqrt(trans_TO[0]*trans_TO[0] + trans_TO[1]*trans_TO[1])
+		
+	# 	br.sendTransform((trans_TO[0]*dist_UO/dist_TO, trans_TO[1]*dist_UO/dist_TO, 0.0),(0.0, 0.0, 0.0, 1.0),rospy.Time.now(),"a_frame","ar_marker_2")
+
+	# 	rospy.Subscriber("user_messages", AT_Message, callback)
+
+		# rate_br.sleep()

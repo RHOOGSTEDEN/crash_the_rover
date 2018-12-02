@@ -1,0 +1,8 @@
+prefix=/home/cc/ee106a/fa17/class/ee106a-aau/ros_workspaces/final_project/devel
+
+Name: forward_motion
+Description: Description of forward_motion
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/cc/ee106a/fa17/class/ee106a-aau/ros_workspaces/final_project/devel/lib 
+Requires: 

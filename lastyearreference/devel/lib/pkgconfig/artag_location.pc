@@ -1,0 +1,8 @@
+prefix=/home/cc/ee106a/fa17/class/ee106a-aau/ros_workspaces/final_project/devel
+
+Name: artag_location
+Description: Description of artag_location
+Version: 0.0.0
+Cflags: -I/home/cc/ee106a/fa17/class/ee106a-aau/ros_workspaces/final_project/devel/include
+Libs: -L/home/cc/ee106a/fa17/class/ee106a-aau/ros_workspaces/final_project/devel/lib 
+Requires: roscpp rospy std_msgs message_runtime

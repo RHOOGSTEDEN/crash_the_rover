@@ -33,48 +33,60 @@ def controller(bot_frame, ar_frame):
   # a 10Hz publishing rate
   r = rospy.Rate(10) # 10hz
   
-  # Ccontroller Constants
+  # Controller Constants
   K1 = 0.3
   K2 = 1
 
   world_frame = "odom"
+  transWorldAR = tfBuffer.lookup_transform(world_frame, ar_frame, rospy.Time(0), rospy.Duration(4.0))
+  WAr_X = transWorldAR.transform.translation.x
+  WAr_Y = transWorldAR.transform.translation.y
+  WAr_Z = transWorldAR.transform.translation.z
+
   isObstacle = False
   # Loop until the node is killed with Ctrl-C
   while not rospy.is_shutdown():
     try:
-      
-      transWorldAR = tfBuffer.lookup_transform(world_frame, ar_frame, rospy.Time())
-      WAr_X = transWorldAR.transform.translation.x
-      WAr_Y = transWorldAR.transform.translation.y
-      WAr_Z = transWorldAR.transform.translation.z
-
-
-      transBotAR = tfBuffer.lookup_transform(frame, ar_frame, rospy.Time())
+      #canTrans = tfBuffer.can_transform(bot_frame, goal_frame, rospy.Time(0), rospy.Duration(4.0))
+      transBotAR = tfBuffer.lookup_transform(bot_frame, ar_frame, rospy.Time(0), rospy.Duration(4.0))
       BAr_X = transBotAR.transform.translation.x
       BAr_Y = transBotAR.transform.translation.y
       BAr_Z = transBotAR.transform.translation.z
 
       control_command = Twist()
 
+
+      #if (canTrans == True)
       # Check if there is an obstacle in your straight path to the AR Tag (Can use laser scan ideas from labs)
+      #if (isObstacle == True):
+
+        # Want to avoid the obstacle by using laser scan data
+        # AR Tag's location with respect to the odom has been saved earlier
+
+        #Find dimension of the obstacle 
+          #Options
+            # When an obstacle is in front of the bot
+              #1. Create a temp map of the immediate area?
+              #2. Detect edges of the obstacle and pick the farthest obstacle-free point dynamically 
 
 
 
+        # Pre plan a set of steps to avoid it 
 
       # If there is no obstacle, go to AR
-      if (isObstacle== False):
+      if (isObstacle == False):
         if (BAr_X > 0.55):
-        print("Heading to AR Tag:")
-        next_x = K1*BAr_X
-        next_theta = K2*BAr_Y
+          print("Heading to AR Tag:")
+          next_x = K1*BAr_X
+          next_theta = K2*BAr_Y
 
-        control_command.linear.x = next_x  
-        control_command.linear.y = 0
-        control_command.linear.z = 0
-        control_command.angular.x = 0
-        control_command.angular.y = 0
-        control_command.angular.z = next_theta
-        pub.publish(control_command)
+          control_command.linear.x = next_x  
+          control_command.linear.y = 0
+          control_command.linear.z = 0
+          control_command.angular.x = 0
+          control_command.angular.y = 0
+          control_command.angular.z = next_theta
+          pub.publish(control_command)
 
 
 

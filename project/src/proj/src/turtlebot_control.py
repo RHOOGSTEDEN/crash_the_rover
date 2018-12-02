@@ -75,7 +75,6 @@ def controller(turtlebot_frame, goal_frame):
     canTrans = tfBuffer.can_transform(turtlebot_frame, goal_frame, rospy.Time.now(), rospy.Duration(0.4))
     print(canTrans)
     control_command = Twist()
-
     if(canTrans == 1):
       try:
         trans = tfBuffer.lookup_transform(turtlebot_frame, goal_frame, rospy.Time.now(), rospy.Duration(0.4))
@@ -91,7 +90,7 @@ def controller(turtlebot_frame, goal_frame):
         pub.publish(control_command)
         hasCheckedLeft = True
 
-      if (hasRotated == 7 & hasCheckedLeft):
+      if (hasRotated == 2 & hasCheckedLeft):
         control_command = patrol.patrol_right()
         pub.publish(control_command)
         control_command = patrol.patrol_right()
@@ -99,12 +98,12 @@ def controller(turtlebot_frame, goal_frame):
         hasCheckedRight = True
         hasRotated = 0
 
-      if(hasRotated != 7):
+      if(hasRotated != 2):
         control_command = patrol.patrol_spin()
         hasRotated = hasRotated + 1
         pub.publish(control_command)
 
-      if(hasCheckedRight & hasCheckedLeft & hasRotated == 26):
+      if(hasCheckedRight & hasCheckedLeft & hasRotated == 2):
         control_command = patrol.patrol_left()
         pub.publish(control_command)
         #requestNew()

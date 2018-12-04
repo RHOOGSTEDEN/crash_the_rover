@@ -98,17 +98,17 @@ def controller(bot_frame, ar_frame):
     r.sleep()
 
       
-# This is Python's sytax for a main() method, which is run by default
-# when exectued in the shell
-if __name__ == '__main__':
-  # Check if the node has received a signal to shut down
-  # If not, run the talker method
+# # This is Python's sytax for a main() method, which is run by default
+# # when exectued in the shell
+# if __name__ == '__main__':
+#   # Check if the node has received a signal to shut down
+#   # If not, run the talker method
 
-  #Run this program as a new node in the ROS computation graph 
-  #called /turtlebot_controller.
-  rospy.init_node('turtlebot_controller', anonymous=True)
+#   #Run this program as a new node in the ROS computation graph 
+#   #called /turtlebot_controller.
+#   rospy.init_node('turtlebot_controller', anonymous=True)
 
-  try:
-    controller(sys.argv[1], sys.argv[2])
-  except rospy.ROSInterruptException:
-    pass
+#   try:
+#     controller(sys.argv[1], sys.argv[2])
+#   except rospy.ROSInterruptException:
+#     pass

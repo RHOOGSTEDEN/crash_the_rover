@@ -88,8 +88,8 @@ class GoForwardAvoid():
 		goal.target_pose.pose.orientation.w = 1.0 #go forward
 		return goal
 	except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
-	      print e
-	      pass
+		print e
+		pass
 
 
     def shutdown(self):

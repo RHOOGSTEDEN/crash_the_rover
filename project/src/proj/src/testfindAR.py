@@ -46,25 +46,72 @@ class ARFinder():
         self.move_base.send_goal(goal)
         self.move_base.wait_for_result(rospy.Duration(60))
 
-    #def forward():
+    def moveLeft(self):
+        print("I am turning to the left")
+        q_rot = quaternion_from_euler(0, 0, np.pi / 2)
+        goal = MoveBaseGoal()
+        goal.target_pose.header.frame_id = 'base_link'
+        goal.target_pose.header.stamp = rospy.Time.now()
+        goal.target_pose.pose.position.x = 0
+        goal.target_pose.pose.orientation.x = q_rot[0]
+        goal.target_pose.pose.orientation.y = q_rot[1]
+        goal.target_pose.pose.orientation.z = q_rot[2]
+        goal.target_pose.pose.orientation.w = q_rot[3]
+        self.move_base.send_goal(goal)
+        self.move_base.wait_for_result(rospy.Duration(60))
+        print("I am moving 2 feet to the left")
+        goal = MoveBaseGoal()
+        goal.target_pose.header.frame_id = 'base_link'
+        goal.target_pose.header.stamp = rospy.Time.now()
+        goal.target_pose.pose.position.x = 1
+        goal.target_pose.pose.orientation.w = 1.0 
+        self.move_base.send_goal(goal)
+        self.move_base.wait_for_result(rospy.Duration(60))
 
+    def moveRight(self):
+        print("I am turning back to the right")
+        q_rot = quaternion_from_euler(0, 0, -np.pi)
+        goal = MoveBaseGoal()
+        goal.target_pose.header.frame_id = 'base_link'
+        goal.target_pose.header.stamp = rospy.Time.now()
+        goal.target_pose.pose.position.x = 0
+        goal.target_pose.pose.orientation.x = q_rot[0]
+        goal.target_pose.pose.orientation.y = q_rot[1]
+        goal.target_pose.pose.orientation.z = q_rot[2]
+        goal.target_pose.pose.orientation.w = q_rot[3]
+        self.move_base.send_goal(goal)
+        self.move_base.wait_for_result(rospy.Duration(60))
+        # self.move_base.send_goal(goal)
+        # self.move_base.wait_for_result(rospy.Duration(60))
+        print("I am moving 2 feet to the right")
+        goal = MoveBaseGoal()
+        goal.target_pose.header.frame_id = 'base_link'
+        goal.target_pose.header.stamp = rospy.Time.now()
+        goal.target_pose.pose.position.x = 1
+        goal.target_pose.pose.orientation.w = 1.0 
+        self.move_base.send_goal(goal)
+        self.move_base.wait_for_result(rospy.Duration(60))
+
+    def requestInstruction(self):
+        return False
 
 
     def findAR(self):
         print("I am finding")
-        if (self.spinScan()):
-            return True
-        # else:
-        #     spin()
-        #     goal = MoveBaseGoal()
-        #     goal.target_pose.header.frame_id = 'base_link'
-        #     goal.target_pose.header.stamp = rospy.Time.now()
-        #     goal.target_pose.pose.position.x = 2.0
-        #     goal.target_pose.pose.orientation.w = 1.0 
-        #     self.move_base.send_goal(goal)
-        #     self.move_base.wait_for_result(rospy.Duration(60))
-        #     findAR()
-        return False
+        try:
+            if (self.spinScan()):
+                return True
+            self.moveLeft()
+            if (self.spinScan()):
+                return True
+            self.moveRight()
+            if (self.spinScan()):
+                return True
+            self.requestInstruction()
+            return False
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
+            print e
+            pass
 
                 
     def spinScan(self):

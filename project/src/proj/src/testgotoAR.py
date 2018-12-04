@@ -47,14 +47,13 @@ class GoForwardAvoid():
 	#allow up to 5 seconds for the action server to come up
 	self.move_base.wait_for_server(rospy.Duration(5))
 
-
-
-
 	self.ar_finder = testfindAR.ARFinder(self.bot_frame, self.ar_frame, self.move_base)
 
 	if (self.ar_finder.findAR()):
 		# Based on the ar_frame and bot_frame, 
+		print("I made it back to goToAR")
 		goal = self.getGoal()
+		print(goal)
 		#start moving
 	    	self.move_base.send_goal(goal)
 
@@ -70,11 +69,6 @@ class GoForwardAvoid():
 			if state == GoalStatus.SUCCEEDED:
 			    rospy.loginfo("Hooray, the base moved 2 meters forward")
 
-
-
-    def shutdown(self):
-        rospy.loginfo("Stop")
-
     def getGoal(self):
 	try:
 		tfBuffer = tf2_ros.Buffer()
@@ -89,7 +83,7 @@ class GoForwardAvoid():
 		goal = MoveBaseGoal()
 		goal.target_pose.header.frame_id = 'base_link'
 		goal.target_pose.header.stamp = rospy.Time.now()
-		goal.target_pose.pose.position.x = BAr_X - 0.55
+		goal.target_pose.pose.position.x = BAr_X - 0.05
 		goal.target_pose.pose.position.y = BAr_Y
 		goal.target_pose.pose.orientation.w = 1.0 #go forward
 		return goal
@@ -98,7 +92,8 @@ class GoForwardAvoid():
 	      pass
 
 
-
+    def shutdown(self):
+        rospy.loginfo("Stop")
 
 if __name__ == '__main__':
     try:

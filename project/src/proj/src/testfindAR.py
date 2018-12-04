@@ -20,6 +20,7 @@ class ARFinder():
     
 
     def scanAR(self):
+        print("I am scanning")
         timeStart = rospy.Time.now()
         timeNow = timeStart
         tfBuffer = tf2_ros.Buffer()
@@ -32,21 +33,15 @@ class ARFinder():
         return False
 
     def spin(self):
-        # pub = rospy.Publisher("/mobile_base/commands/velocity" , Twist, queue_size=10)
-        # # D-Constants 
-        # control_command = Twist()
-        # control_command.linear.x = next_x  
-        # control_command.linear.y = 0
-        # control_command.linear.z = 0
-        # control_command.angular.x = 0
-        # control_command.angular.y = 0
-        # control_command.angular.z = next_theta
-        # pub.publish(control_command)
-        q_rot = quaternion_from_euler(0, 0, 2*np.pi / 3)
+        print("I am spinning")
+        q_rot = quaternion_from_euler(0, 0, np.pi / 3)
         goal = MoveBaseGoal()
         goal.target_pose.header.frame_id = 'base_link'
         goal.target_pose.header.stamp = rospy.Time.now()
         goal.target_pose.pose.position.x = 0
+        goal.target_pose.pose.orientation.x = q_rot[0]
+        goal.target_pose.pose.orientation.y = q_rot[1]
+        goal.target_pose.pose.orientation.z = q_rot[2]
         goal.target_pose.pose.orientation.w = q_rot[3]
         self.move_base.send_goal(goal)
         self.move_base.wait_for_result(rospy.Duration(60))
@@ -56,13 +51,28 @@ class ARFinder():
 
 
     def findAR(self):
-        count = 0
-        while(count< 3):
-            self.spin()
-            if(self.scanAR()):
-                return True
-            else:
-                count = count + 1
+        print("I am finding")
+        if spinScan:
+            return True
+        else:
+            spin()
+            goal = MoveBaseGoal()
+            goal.target_pose.header.frame_id = 'base_link'
+            goal.target_pose.header.stamp = rospy.Time.now()
+            goal.target_pose.pose.position.x = 2.0
+            goal.target_pose.pose.orientation.w = 1.0 
+            self.move_base.send_goal(goal)
+            self.move_base.wait_for_result(rospy.Duration(60))
+            findAR()
         return False
 
                 
+    def spinScan(self):
+        count = 0
+        while(count < 6):
+            if(self.scanAR()):
+                return True
+            else:
+                self.spin()
+                count = count + 1
+        return False

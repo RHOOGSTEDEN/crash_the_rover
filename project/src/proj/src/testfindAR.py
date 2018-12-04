@@ -52,18 +52,18 @@ class ARFinder():
 
     def findAR(self):
         print("I am finding")
-        if spinScan:
+        if (self.spinScan()):
             return True
-        else:
-            spin()
-            goal = MoveBaseGoal()
-            goal.target_pose.header.frame_id = 'base_link'
-            goal.target_pose.header.stamp = rospy.Time.now()
-            goal.target_pose.pose.position.x = 2.0
-            goal.target_pose.pose.orientation.w = 1.0 
-            self.move_base.send_goal(goal)
-            self.move_base.wait_for_result(rospy.Duration(60))
-            findAR()
+        # else:
+        #     spin()
+        #     goal = MoveBaseGoal()
+        #     goal.target_pose.header.frame_id = 'base_link'
+        #     goal.target_pose.header.stamp = rospy.Time.now()
+        #     goal.target_pose.pose.position.x = 2.0
+        #     goal.target_pose.pose.orientation.w = 1.0 
+        #     self.move_base.send_goal(goal)
+        #     self.move_base.wait_for_result(rospy.Duration(60))
+        #     findAR()
         return False
 
                 

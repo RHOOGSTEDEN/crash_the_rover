@@ -35,6 +35,7 @@ class GoForwardAvoid():
         #rospy.init_node('nav_test', anonymous=False)
         self.ar_frame = ar_frame
         self.bot_frame = bot_frame
+        self.condition = False
 
 	#What to do if shut down (e.g. ctrl + C or failure)
 	rospy.on_shutdown(self.shutdown)
@@ -68,6 +69,9 @@ class GoForwardAvoid():
 			state = self.move_base.get_state()
 			if state == GoalStatus.SUCCEEDED:
 			    rospy.loginfo("\nI have reached my destination")
+			self.condition = True
+
+
 
     def getGoal(self):
 	try:
@@ -83,7 +87,7 @@ class GoForwardAvoid():
 		goal = MoveBaseGoal()
 		goal.target_pose.header.frame_id = 'base_link'
 		goal.target_pose.header.stamp = rospy.Time.now()
-		goal.target_pose.pose.position.x = BAr_X - 0.15
+		goal.target_pose.pose.position.x = BAr_X - 0.4
 		goal.target_pose.pose.position.y = BAr_Y
 		goal.target_pose.pose.orientation.w = 1.0 #go forward
 		return goal

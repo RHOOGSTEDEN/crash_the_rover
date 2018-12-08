@@ -20,23 +20,20 @@ class Instructions():
     def pickUp(self, ar):
         print("I am picking up at " + ar)
         goToAR.GoForwardAvoid(self.base, ar)
-        self.isHome = False
-        return 0
+        self.isHome = False        
 
     #Instruction recieved by dispatch. Takes in destination AR tag given by dispatch
     def dropOff(self, ar):
         print("I am dropping off at " + ar)
         goToAR.GoForwardAvoid(self.base, ar)
         self.isHome = False
-        return 0
 
     #Bot will return home on its own when no further instructions are recieved.
     #Dispatch should never be instructing the bot to go home. Home is a static var
     def goHome(self):
         print("I am going home")
-        goToAR.GoForwardAvoid(self.base, self.home)
-        self.isHome = True       
-        return 0
+        if(goToAR.GoForwardAvoid(self.base, self.home).condition):
+            self.isHome = True       
 
     #Bot will request new when it either completes its previous instruction
     #or when it cannot find its destination

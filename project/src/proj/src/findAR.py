@@ -9,7 +9,6 @@ import sys
 from geometry_msgs.msg import Twist
 from tf.transformations import *
 import numpy as np
-import instructions
 
 
 class ARFinder():
@@ -26,7 +25,7 @@ class ARFinder():
         timeNow = timeStart
         tfBuffer = tf2_ros.Buffer()
         tfListener = tf2_ros.TransformListener(tfBuffer)
-        while(timeNow.to_sec() -timeStart.to_sec() < 3):
+        while(timeNow.to_sec() -timeStart.to_sec() < 5):
             canTrans = tfBuffer.can_transform(self.bot_frame, self.ar_frame, rospy.Time(0))
             if (canTrans):
                 return True
